@@ -54,7 +54,7 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model("TestUser", userSchema);
 
 // ==================== ROUTES ====================
 
@@ -212,6 +212,28 @@ app.get("/api/test", (req, res) => {
     ],
   });
 });
+
+// ==================== ONETRUE BACKEND ====================
+// OneTrue folders are kept directly in the project root.
+// The existing test server and app.listen setup remain unchanged.
+const authRoutes = require("./routes/authRoutes.js").default;
+const adminRoutes = require("./routes/adminRoutes.js").default;
+const clientRoutes = require("./routes/clientRoutes.js").default;
+const { getPublicBookingByNumber } = require("./controllers/bookingController.js");
+const asyncHandler = require("./utils/asyncHandler.js").default;
+
+app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/client", clientRoutes);
+
+app.get(
+  "/api/bookings/status/:bookingNumber",
+  asyncHandler(getPublicBookingByNumber),
+);
+app.get(
+  "/api/public/bookings/:bookingNumber",
+  asyncHandler(getPublicBookingByNumber),
+);
 
 // 404 Handler
 app.use((req, res) => {
